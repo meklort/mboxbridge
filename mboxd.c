@@ -395,9 +395,7 @@ int backend_init(struct mbox_context *context)
 		assert(context->backend->copy);
 		assert(context->backend->set_bytemap);
 		assert(context->backend->lpc_reset);
-
-		rc = context->backend->init(context);
-	}  
+	}
 	
 	return rc;
 }
@@ -459,6 +457,11 @@ int main(int argc, char **argv)
 	}
 
 	rc = dbus_init(context);
+	if (rc) {
+		goto finish;
+	}
+
+	rc = context->backend->init(context);
 	if (rc) {
 		goto finish;
 	}
