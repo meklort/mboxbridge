@@ -368,12 +368,13 @@ int backend_init(struct mbox_context *context)
 #ifdef VIRTUAL_PNOR_ENABLED
 	rc = probe_vpnor_backed_flash(context);
 	if(rc)
+#endif
 	{
 		rc = probe_mtd_backed_flash(context);
+		if (rc) {
+			rc = probe_file_backed_flash(context);
+		}
 	}
-#else
-	rc = probe_mtd_backed_flash(context);
-#endif
 
 	if (rc) {
 		if(context->filename) {
