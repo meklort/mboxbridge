@@ -122,10 +122,6 @@ static int flash_dev_init(struct mbox_context *context)
 	    log_2(context->backend->mtd_info.erasesize);
 	MSG_DBG("Flash erase size: 0x%.8x\n",
 		context->backend->mtd_info.erasesize);
-
-	/* We are booting from a file - preload it to the lpc memory window */
-	pread(context->fds[MTD_FD].fd, context->mem, MIN(context->flash_size, context->mem_size), 0);
-
 out:
 	return rc;
 }
@@ -283,5 +279,8 @@ static int flash_write(struct mbox_context *context, uint32_t offset, void *buf,
  */
 static int lpc_reset(struct mbox_context *context)
 {
+	/* Preload Flash contents into memory window */
+	pread(context->fds[MTD_FD].fd, context->mem, MIN(context->flash_size, context->mem_size), 0);
+
 	return lpc_map_memory(context);
 }
